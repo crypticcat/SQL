@@ -56,6 +56,13 @@ SELECT name, ROUND(population/1000000,2), ROUND(gdp/1000000000,2)
 FROM world
 WHERE continent = 'South America'
 
+
+ROUND(f,p) returns f rounded to p decimal places.
+The number of decimal places may be negative, this will round to the nearest 10 (when p is -1) or 100 (when p is -2) or 1000 (when p is -3) etc..
+ROUND(7253.86, 0)    ->  7254
+ROUND(7253.86, 1)    ->  7253.9
+ROUND(7253.86,-3)    ->  7000
+Compatibility: ROUND(f,p): ingres, mysql, oracle, postgres, sqlserver - yes.
 10. Show the name and per-capita GDP for those countries with a GDP of at least one trillion (1000000000000; that is 12 zeros). Round this value to the nearest 1000.
 Show per-capita GDP for the trillion dollar countries to the nearest $1000.
 Solution:
@@ -63,6 +70,8 @@ SELECT name, ROUND(gdp/population, -3)
 FROM world
 WHERE gdp >= 1000000000000
 
+LENGTH(s) returns the number of characters in string s.
+Compatibility: LENGTH(s): ingres, mysql, oracle, postgres - yes. Sqlserver - no (use LEN(s)).
 11. Greece has capital Athens.
 Each of the strings 'Greece', and 'Athens' has 6 characters.
 Show the name and capital where the name and the capital have the same number of characters.
@@ -71,3 +80,14 @@ Solution:
 SELECT name, capital
 FROM world
 WHERE LENGTH(name) = LENGTH(capital)
+
+LEFT(s,n) allows you to extract n characters from the start of the string s
+Compatibility: LEFT(s,i): ingres, mysql, sqlserver - yes. Oracle - no (use SUBSTR(s, 1, i)). Postgres - no (use SUBSTRING(s, 1, i)):
+12. The capital of Sweden is Stockholm. Both words start with the letter 'S'.
+Show the name and the capital where the first letters of each match. Don't include countries where the name and the capital are the same word.
+You can use the function LEFT to isolate the first character.
+You can use <> as the NOT EQUALS operator.
+Solution:
+SELECT name, capital
+FROM world
+WHERE LEFT(name, 1) = LEFT(capital, 1) AND capital <> name
