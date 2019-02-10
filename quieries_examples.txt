@@ -105,3 +105,34 @@ name LIKE '%e%' AND
 name LIKE '%i%' AND
 name LIKE '%o%' AND
 name LIKE '%u%';
+
+"nobel" table:
+Find all details of the prize won by EUGENE O'NEILL
+Escaping single quotes:
+You can't put a single quote in a quote string directly.
+You can use two single quotes within a quoted string.
+Solution:
+SELECT * FROM nobel
+WHERE winner = 'EUGENE O''NEILL';
+
+List the winners, year and subject where the winner starts with Sir.
+Show the the most recent first, then by name order.
+Solution:
+SELECT winner, yr, subject
+  FROM nobel
+WHERE winner LIKE 'Sir%'
+ ORDER BY yr DESC, winner;
+
+The expression subject IN ('Chemistry','Physics') can be used as a value - it will be 0 or 1.
+Show the 1984 winners and subject ordered by subject and winner name; but list Chemistry and Physics last.
+SELECT winner, subject
+  FROM nobel
+ WHERE yr=1984
+ ORDER BY subject IN ('Physics','Chemistry'), subject, winner;
+ 
+ Solution2:
+ SELECT winner, subject
+  FROM nobel
+ WHERE yr=1984
+ ORDER BY 
+ CASE WHEN subject IN ('Physics','Chemistry') THEN 1 ELSE 0 END, subject, winner;
