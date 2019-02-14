@@ -136,3 +136,36 @@ SELECT winner, subject
  WHERE yr=1984
  ORDER BY 
  CASE WHEN subject IN ('Physics','Chemistry') THEN 1 ELSE 0 END, subject, winner;
+
+From "world" table:
+Give the total GDP of Africa:
+Solution:
+SELECT SUM(gdp)
+FROM world
+WHERE continent = 'Africa'
+
+How many countries have an area of at least 1000000:
+SELECT COUNT(name)
+FROM world
+WHERE area >= 1000000;
+
+By including a GROUP BY clause functions such as SUM and COUNT are applied to groups of items sharing values. When you specify GROUP BY continent the result is that you get only one row for each different value of continent. All the other columns must be "aggregated" by one of SUM, COUNT ...
+The HAVING clause allows use to filter the groups which are displayed. The HAVING clause is tested after the GROUP BY. The WHERE clause filters rows before the aggregation, the HAVING clause filters after the aggregation.
+If a ORDER BY clause is included we can refer to columns by their position.
+
+For each continent show the continent and number of countries:
+SELECT continent, COUNT(name)
+FROM world
+GROUP BY continent;
+
+For each continent show the continent and number of countries with populations of at least 10 million:
+SELECT continent, COUNT(name)
+FROM world
+WHERE population >=10000000
+GROUP BY continent;
+
+List the continents that have a total population of at least 100 million:
+SELECT continent
+  FROM world
+ GROUP BY continent
+HAVING SUM(population)>=100000000;
