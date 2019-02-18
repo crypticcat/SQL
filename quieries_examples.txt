@@ -169,3 +169,9 @@ SELECT continent
   FROM world
  GROUP BY continent
 HAVING SUM(population)>=100000000;
+
+From Hackerrank:
+Easy:
+Let  be the number of CITY entries in STATION, and let  be the number of distinct CITY names in STATION; query the value of  from STATION.
+SELECT COUNT(city) - (COUNT(DISTINCT (city))) as N 
+FROM station;
