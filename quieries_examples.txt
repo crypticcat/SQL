@@ -49,7 +49,8 @@ SELECT name, population, area
 FROM world
 WHERE area > 3000000 XOR population > 250000000
 
-9. Show the name and population in millions and the GDP in billions for the countries of the continent 'South America'. Use the ROUND function to show the values to two decimal places.
+9. Show the name and population in millions and the GDP in billions for the countries of the continent 'South America'.
+Use the ROUND function to show the values to two decimal places.
 For South America show population in millions and GDP in billions both to 2 decimal places.
 Solution:
 SELECT name, ROUND(population/1000000,2), ROUND(gdp/1000000000,2)
@@ -63,7 +64,8 @@ ROUND(7253.86, 0)    ->  7254
 ROUND(7253.86, 1)    ->  7253.9
 ROUND(7253.86,-3)    ->  7000
 Compatibility: ROUND(f,p): ingres, mysql, oracle, postgres, sqlserver - yes.
-10. Show the name and per-capita GDP for those countries with a GDP of at least one trillion (1000000000000; that is 12 zeros). Round this value to the nearest 1000.
+10. Show the name and per-capita GDP for those countries with a GDP of at least one trillion (1000000000000; that is 12 zeros).
+Round this value to the nearest 1000.
 Show per-capita GDP for the trillion dollar countries to the nearest $1000.
 Solution:
 SELECT name, ROUND(gdp/population, -3)
@@ -84,7 +86,8 @@ WHERE LENGTH(name) = LENGTH(capital)
 LEFT(s,n) allows you to extract n characters from the start of the string s
 Compatibility: LEFT(s,i): ingres, mysql, sqlserver - yes. Oracle - no (use SUBSTR(s, 1, i)). Postgres - no (use SUBSTRING(s, 1, i)):
 12. The capital of Sweden is Stockholm. Both words start with the letter 'S'.
-Show the name and the capital where the first letters of each match. Don't include countries where the name and the capital are the same word.
+Show the name and the capital where the first letters of each match.
+Don't include countries where the name and the capital are the same word.
 You can use the function LEFT to isolate the first character.
 You can use <> as the NOT EQUALS operator.
 Solution:
@@ -92,7 +95,8 @@ SELECT name, capital
 FROM world
 WHERE LEFT(name, 1) = LEFT(capital, 1) AND capital <> name;
 
-13. Equatorial Guinea and Dominican Republic have all of the vowels (a e i o u) in the name. They don't count because they have more than one word in the name.
+13. Equatorial Guinea and Dominican Republic have all of the vowels (a e i o u) in the name.
+They don't count because they have more than one word in the name.
 Find the country that has all the vowels and no spaces in its name.
 You can use the phrase name NOT LIKE '%a%' to exclude characters from your results.
 The query shown misses countries like Bahamas and Belarus because they contain at least one 'a'
@@ -149,8 +153,12 @@ SELECT COUNT(name)
 FROM world
 WHERE area >= 1000000;
 
-By including a GROUP BY clause functions such as SUM and COUNT are applied to groups of items sharing values. When you specify GROUP BY continent the result is that you get only one row for each different value of continent. All the other columns must be "aggregated" by one of SUM, COUNT ...
-The HAVING clause allows use to filter the groups which are displayed. The HAVING clause is tested after the GROUP BY. The WHERE clause filters rows before the aggregation, the HAVING clause filters after the aggregation.
+By including a GROUP BY clause functions such as SUM and COUNT are applied to groups of items sharing values.
+When you specify GROUP BY continent the result is that you get only one row for each different value of continent.
+All the other columns must be "aggregated" by one of SUM, COUNT ...
+The HAVING clause allows use to filter the groups which are displayed.
+The HAVING clause is tested after the GROUP BY.
+The WHERE clause filters rows before the aggregation, the HAVING clause filters after the aggregation.
 If a ORDER BY clause is included we can refer to columns by their position.
 
 For each continent show the continent and number of countries:
@@ -176,7 +184,8 @@ Let  be the number of CITY entries in STATION, and let  be the number of distinc
 SELECT COUNT(city) - (COUNT(DISTINCT (city))) as N 
 FROM station;
 
-Query the two cities in STATION with the shortest and longest CITY names, as well as their respective lengths (i.e.: number of characters in the name). If there is more than one smallest or largest city, choose the one that comes first when ordered alphabetically:
+Query the two cities in STATION with the shortest and longest CITY names, as well as their respective lengths (i.e.: number of characters in the name).
+If there is more than one smallest or largest city, choose the one that comes first when ordered alphabetically:
 SELECT city, LENGTH(city)
     FROM station
 ORDER BY LENGTH(city) ASC, city ASC
@@ -185,3 +194,40 @@ SELECT city, LENGTH(city)
    FROM station                              
 ORDER BY LENGTH(city) DESC, city ASC
 LIMIT 1;
+
+Query the list of CITY names starting with vowels (i.e., a, e, i, o, or u) from STATION.
+Your result cannot contain duplicates:
+SELECT DISTINCT city
+    FROM station
+WHERE city LIKE 'A%' OR
+city LIKE 'E%' OR
+city LIKE 'I%' OR
+city LIKE 'O%' OR
+city LIKE 'U%';
+
+Query the list of CITY names from STATION which have vowels (i.e., a, e, i, o, and u) as both their first and last characters. Your result cannot contain duplicates:
+SELECT DISTINCT city
+    FROM station
+WHERE (city LIKE 'A%' OR city LIKE 'E%' OR city LIKE 'I%' OR city LIKE 'O%' OR
+city LIKE 'U%') AND
+(city LIKE '%a' OR city LIKE '%e' OR city LIKE '%i' OR city LIKE '%o' OR city LIKE '%u');
+
+SELECT DISTINCT city FROM station WHERE city LIKE '[AEIOU]%' AND city LIKE '%[aeuou]';
+
+Query the list of CITY names from STATION that do not start with vowels. Your result cannot contain duplicates:
+SELECT DISTINCT city
+    FROM station
+WHERE city NOT LIKE 'A%' AND
+city NOT LIKE 'E%' AND
+city NOT LIKE 'I%' AND
+city NOT LIKE 'O%' AND
+city NOT LIKE 'U%';
+
+Query the list of CITY names from STATION that do not end with vowels. Your result cannot contain duplicates:
+SELECT DISTINCT city
+    FROM station
+WHERE city NOT LIKE 'A%' AND
+city NOT LIKE 'E%' AND
+city NOT LIKE 'I%' AND
+city NOT LIKE 'O%' AND
+city NOT LIKE 'U%';
