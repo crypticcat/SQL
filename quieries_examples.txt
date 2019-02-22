@@ -1,0 +1,177 @@
+From https://sqlzoo.net/
+...
+2. How to use WHERE to filter records.
+Show the name for the countries that have a population of at least 200 million.
+200 million is 200000000, there are eight zeros
+Solution:
+SELECT name FROM world
+WHERE population > 200000000
+
+3. Give the name and the per capita GDP for those countries with a population of at least 200 million.
+Solution:
+SELECT name, gdp/population
+FROM world
+WHERE population > 200000000
+
+4. Show the name and population in millions for the countries of the continent 'South America'.
+Divide the population by 1000000 to get population in millions.
+Solution:
+SELECT name, population/1000000
+FROM world
+WHERE continent = 'South America'
+
+5. Show the name and population for France, Germany, Italy
+Solution:
+SELECT name, population
+FROM world
+WHERE name IN ('France', 'Germany', 'Italy')
+
+6. Show the countries which have a name that includes the word 'United'
+Solution:
+SELECT name
+FROM world
+WHERE name LIKE '%United%'
+
+7. Two ways to be big: A country is big if it has an area of more than 3 million sq km or it has a population of more than 250 million.
+Show the countries that are big by area or big by population. Show name, population and area.
+Solution:
+SELECT name, population, area
+FROM world
+WHERE area > 3000000 OR population > 250000000
+
+8. Exclusive OR (XOR). Show the countries that are big by area or big by population but not both. Show name, population and area.
+Australia has a big area but a small population, it should be included.
+Indonesia has a big population but a small area, it should be included.
+China has a big population and big area, it should be excluded.
+United Kingdom has a small population and a small area, it should be excluded.
+Solution:
+SELECT name, population, area
+FROM world
+WHERE area > 3000000 XOR population > 250000000
+
+9. Show the name and population in millions and the GDP in billions for the countries of the continent 'South America'. Use the ROUND function to show the values to two decimal places.
+For South America show population in millions and GDP in billions both to 2 decimal places.
+Solution:
+SELECT name, ROUND(population/1000000,2), ROUND(gdp/1000000000,2)
+FROM world
+WHERE continent = 'South America'
+
+
+ROUND(f,p) returns f rounded to p decimal places.
+The number of decimal places may be negative, this will round to the nearest 10 (when p is -1) or 100 (when p is -2) or 1000 (when p is -3) etc..
+ROUND(7253.86, 0)    ->  7254
+ROUND(7253.86, 1)    ->  7253.9
+ROUND(7253.86,-3)    ->  7000
+Compatibility: ROUND(f,p): ingres, mysql, oracle, postgres, sqlserver - yes.
+10. Show the name and per-capita GDP for those countries with a GDP of at least one trillion (1000000000000; that is 12 zeros). Round this value to the nearest 1000.
+Show per-capita GDP for the trillion dollar countries to the nearest $1000.
+Solution:
+SELECT name, ROUND(gdp/population, -3)
+FROM world
+WHERE gdp >= 1000000000000
+
+LENGTH(s) returns the number of characters in string s.
+Compatibility: LENGTH(s): ingres, mysql, oracle, postgres - yes. Sqlserver - no (use LEN(s)).
+11. Greece has capital Athens.
+Each of the strings 'Greece', and 'Athens' has 6 characters.
+Show the name and capital where the name and the capital have the same number of characters.
+You can use the LENGTH function to find the number of characters in a string
+Solution:
+SELECT name, capital
+FROM world
+WHERE LENGTH(name) = LENGTH(capital)
+
+LEFT(s,n) allows you to extract n characters from the start of the string s
+Compatibility: LEFT(s,i): ingres, mysql, sqlserver - yes. Oracle - no (use SUBSTR(s, 1, i)). Postgres - no (use SUBSTRING(s, 1, i)):
+12. The capital of Sweden is Stockholm. Both words start with the letter 'S'.
+Show the name and the capital where the first letters of each match. Don't include countries where the name and the capital are the same word.
+You can use the function LEFT to isolate the first character.
+You can use <> as the NOT EQUALS operator.
+Solution:
+SELECT name, capital
+FROM world
+WHERE LEFT(name, 1) = LEFT(capital, 1) AND capital <> name;
+
+13. Equatorial Guinea and Dominican Republic have all of the vowels (a e i o u) in the name. They don't count because they have more than one word in the name.
+Find the country that has all the vowels and no spaces in its name.
+You can use the phrase name NOT LIKE '%a%' to exclude characters from your results.
+The query shown misses countries like Bahamas and Belarus because they contain at least one 'a'
+Solution:
+SELECT name FROM world
+WHERE
+name NOT LIKE '% %' AND
+name LIKE '%a%' AND
+name LIKE '%e%' AND
+name LIKE '%i%' AND
+name LIKE '%o%' AND
+name LIKE '%u%';
+
+"nobel" table:
+Find all details of the prize won by EUGENE O'NEILL
+Escaping single quotes:
+You can't put a single quote in a quote string directly.
+You can use two single quotes within a quoted string.
+Solution:
+SELECT * FROM nobel
+WHERE winner = 'EUGENE O''NEILL';
+
+List the winners, year and subject where the winner starts with Sir.
+Show the the most recent first, then by name order.
+Solution:
+SELECT winner, yr, subject
+  FROM nobel
+WHERE winner LIKE 'Sir%'
+ ORDER BY yr DESC, winner;
+
+The expression subject IN ('Chemistry','Physics') can be used as a value - it will be 0 or 1.
+Show the 1984 winners and subject ordered by subject and winner name; but list Chemistry and Physics last.
+SELECT winner, subject
+  FROM nobel
+ WHERE yr=1984
+ ORDER BY subject IN ('Physics','Chemistry'), subject, winner;
+ 
+ Solution2:
+ SELECT winner, subject
+  FROM nobel
+ WHERE yr=1984
+ ORDER BY 
+ CASE WHEN subject IN ('Physics','Chemistry') THEN 1 ELSE 0 END, subject, winner;
+
+From "world" table:
+Give the total GDP of Africa:
+Solution:
+SELECT SUM(gdp)
+FROM world
+WHERE continent = 'Africa'
+
+How many countries have an area of at least 1000000:
+SELECT COUNT(name)
+FROM world
+WHERE area >= 1000000;
+
+By including a GROUP BY clause functions such as SUM and COUNT are applied to groups of items sharing values. When you specify GROUP BY continent the result is that you get only one row for each different value of continent. All the other columns must be "aggregated" by one of SUM, COUNT ...
+The HAVING clause allows use to filter the groups which are displayed. The HAVING clause is tested after the GROUP BY. The WHERE clause filters rows before the aggregation, the HAVING clause filters after the aggregation.
+If a ORDER BY clause is included we can refer to columns by their position.
+
+For each continent show the continent and number of countries:
+SELECT continent, COUNT(name)
+FROM world
+GROUP BY continent;
+
+For each continent show the continent and number of countries with populations of at least 10 million:
+SELECT continent, COUNT(name)
+FROM world
+WHERE population >=10000000
+GROUP BY continent;
+
+List the continents that have a total population of at least 100 million:
+SELECT continent
+  FROM world
+ GROUP BY continent
+HAVING SUM(population)>=100000000;
+
+From Hackerrank:
+Easy:
+Let  be the number of CITY entries in STATION, and let  be the number of distinct CITY names in STATION; query the value of  from STATION.
+SELECT COUNT(city) - (COUNT(DISTINCT (city))) as N 
+FROM station;
